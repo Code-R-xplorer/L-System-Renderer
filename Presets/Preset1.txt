@@ -1,0 +1,5 @@
+Title: Preset 1
+Axiom: F
+Rules: {F:F[+F]F[-F]F}
+Iterations: 5
+Angle: 25.7

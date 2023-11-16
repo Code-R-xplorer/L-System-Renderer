@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,19 +23,24 @@ namespace L_System_Renderer
     public partial class Test : Page
     {
         
-        private string _axiom = "F";
+        private string _axiom = "X";
         private Dictionary<char, string> _rules = new()
         {
-            ['F'] = "F+F--F+F",
+            ['X'] = "F[+X][-X]FX",
+            ['F'] = "FF",
             ['+'] = "+",
-            ['-'] = "-"
+            ['-'] = "-",
+            ['['] = "[",
+            [']'] = "]"
         };
-        private float _angle = 60;
-        private float _length = 1;
+        // private float _angle = 60;
+        // private float _length = 1;
 
-        private int _iterations = 5;
+        private int _iterations = 7;
 
         private string _final;
+
+        
 
         public Test()
         {
@@ -61,6 +67,16 @@ namespace L_System_Renderer
             return outString;
         }
 
+        private class State
+        {
+            public double Size;
+            public double Angle;
+            public Point Position;
+            public Point Direction;
+
+            public State Clone() { return (State)this.MemberwiseClone(); }
+        }
+
         
 
         protected override void OnRender(DrawingContext drawingContext)
@@ -69,7 +85,7 @@ namespace L_System_Renderer
             var pen = new Pen
             {
                 Brush = Brushes.Black,
-                Thickness = 0.05f,
+                Thickness = 0.3f,
                 // pen.LineJoin = PenLineJoin.Round;
                 EndLineCap = PenLineCap.Round,
                 StartLineCap = PenLineCap.Round
@@ -79,8 +95,15 @@ namespace L_System_Renderer
             // Create a DrawingGroup
             DrawingGroup dGroup = new DrawingGroup();
 
-            var currentPosition = new Point(0, 0);
-            var direction = new Point(1, 0);
+            State state = new State
+            {
+                Position = new Point(0, 0),
+                Direction = new Point(0, -1),
+                Angle = 25.7,
+                Size = 1
+            };
+
+            var states = new Stack<State>();
 
             // Obtain a DrawingContext from 
             // the DrawingGroup.
@@ -88,26 +111,45 @@ namespace L_System_Renderer
             {
                 foreach (var c in _final)
                 {
+                    double angle;
                     switch (c)
                     {
                         case 'F':
-                            var dx = direction.X * _length;
-                            var dy = direction.Y * _length;
-                            var newPos = new Point( currentPosition.X + dx, currentPosition.Y + dy);
-                            dc.DrawLine(pen, currentPosition, newPos);
-                            currentPosition = newPos;
+                            var dx = state.Direction.X * state.Size;
+                            var dy = state.Direction.Y * state.Size;
+                            var newPos = new Point(state.Position.X + dx, state.Position.Y + dy);
+                            dc.DrawLine(pen, state.Position, newPos);
+                            state.Position = newPos;
+                            break;
+                        case 'f':
+                            var distanceX = state.Direction.X * state.Size;
+                            var distanceY = state.Direction.Y * state.Size;
+                            state.Position = new Point(state.Position.X + distanceX, state.Position.Y + distanceY);
                             break;
                         case '+':
-                            var angle = _angle * Math.PI / 180.0;
-                            var angleNeg = angle *= -1;
-                            direction = new Point(direction.X * Math.Cos(angleNeg) - direction.Y * Math.Sin(angleNeg),
-                                direction.X * Math.Sin(angleNeg) + direction.Y * Math.Cos(angleNeg));
-                            
+                            angle = state.Angle * Math.PI / 180.0;
+                            angle *= -1;
+                            state.Direction = new Point(state.Direction.X * Math.Cos(angle) - state.Direction.Y * Math.Sin(angle),
+                                state.Direction.X * Math.Sin(angle) + state.Direction.Y * Math.Cos(angle));
                             break;
                         case '-':
-                            var anglePos = _angle * Math.PI / 180.0;
-                            direction = new Point(direction.X * Math.Cos(anglePos) - direction.Y * Math.Sin(anglePos),
-                                direction.X * Math.Sin(anglePos) + direction.Y * Math.Cos(anglePos));
+                            angle = state.Angle * Math.PI / 180.0;
+                            state.Direction = new Point(state.Direction.X * Math.Cos(angle) - state.Direction.Y * Math.Sin(angle),
+                                state.Direction.X * Math.Sin(angle) + state.Direction.Y * Math.Cos(angle));
+                            break;
+                        case '[':
+                            states.Push(state.Clone());
+                            break;
+                        case ']':
+                            state = states.Pop();
+                            break;
+                        case '|':
+                            angle = 180 * Math.PI / 180.0;
+                            state.Direction = new Point(state.Direction.X * Math.Cos(angle) - state.Direction.Y * Math.Sin(angle),
+                                state.Direction.X * Math.Sin(angle) + state.Direction.Y * Math.Cos(angle));
+                            break;
+                        case '!':
+                            state.Angle *= -1;
                             break;
                     }
                 }
