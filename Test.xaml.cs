@@ -21,10 +21,47 @@ namespace L_System_Renderer
     /// </summary>
     public partial class Test : Page
     {
+        
+        private string _axiom = "F";
+        private Dictionary<string, string> _rules;
+        private float _angle = MathF.PI / 3;
+        private float _length = 1;
+
+        private int _iterations = 1;
+
+        private string _final;
+
         public Test()
         {
+            _rules = new Dictionary<string, string>();
+            _rules["F"] = "F+F--F+F";
+            _rules["+"] = "+";
+            _rules["-"] = "-";
+
             InitializeComponent();
+
+            _final = _axiom;
+            for(int i = 0; i < _iterations; i++) 
+            {
+                _final = lsystem(_final, _rules);
+            }
+
         }
+
+        private string lsystem(string start, Dictionary<string, string> rules)
+        {
+            var outString = "";
+
+            foreach(var c in start)
+            {
+                var s = rules[c.ToString()];
+                outString += s;
+            }
+
+            return outString;
+        }
+
+        
 
         protected override void OnRender(DrawingContext drawingContext)
         {
@@ -39,31 +76,7 @@ namespace L_System_Renderer
             // the DrawingGroup.
             using (DrawingContext dc = dGroup.Open())
             {
-                // Draw a rectangle at full opacity.
-                dc.DrawRectangle(Brushes.Blue, shapeOutlinePen, new Rect(0, 0, 25, 25));
-
-                // Push an opacity change of 0.5. 
-                // The opacity of each subsequent drawing will
-                // will be multiplied by 0.5.
-                dc.PushOpacity(0.5);
-
-                // This rectangle is drawn at 50% opacity.
-                dc.DrawRectangle(Brushes.Blue, shapeOutlinePen, new Rect(25, 25, 25, 25));
-
-                // Blurs subsquent drawings. 
-                dc.PushEffect(new BlurBitmapEffect(), null);
-
-                // This rectangle is blurred and drawn at 50% opacity (0.5 x 0.5). 
-                dc.DrawRectangle(Brushes.Blue, shapeOutlinePen, new Rect(50, 50, 25, 25));
-
-                // This rectangle is also blurred and drawn at 50% opacity.
-                dc.DrawRectangle(Brushes.Blue, shapeOutlinePen, new Rect(75, 75, 25, 25));
-
-                // Stop applying the blur to subsquent drawings.
-                dc.Pop();
-
-                // This rectangle is drawn at 50% opacity with no blur effect.
-                dc.DrawRectangle(Brushes.Blue, shapeOutlinePen, new Rect(100, 100, 25, 25));
+                
             }
 
             // Display the drawing using an image control.
