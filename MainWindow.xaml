@@ -5,5 +5,5 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:L_System_Renderer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Source="Test.xaml">
+        Title="MainWindow" Height="450" Width="800" Source="LSystemRenderer.xaml">
 </NavigationWindow>

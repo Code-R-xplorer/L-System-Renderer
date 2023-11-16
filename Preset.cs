@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace L_System_Renderer
 {
-    internal class Preset
+    public class Preset
     {
         public string Title;
         public string Axiom;

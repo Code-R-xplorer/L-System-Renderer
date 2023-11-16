@@ -1,0 +1,6 @@
+Title: Preset 5
+Axiom: X
+Rules: X=F[+X][-X]FX,F=FF
+Iterations: 7
+Angle: 25.7
+Constants: +,-,[,]

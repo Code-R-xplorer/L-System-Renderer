@@ -1,0 +1,6 @@
+Title: Preset 2
+Axiom: F
+Rules: F=F[+F]F[-F][F]
+Iterations: 5
+Angle: 20
+Constants: +,-,[,]
