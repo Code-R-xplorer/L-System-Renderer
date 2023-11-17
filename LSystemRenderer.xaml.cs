@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,23 +22,42 @@ namespace L_System_Renderer
     /// </summary>
     public partial class LSystemRenderer : Page
     {
-        private LSystem lSystem;
+        public LSystem LSystem;
         private Preset _currentPreset;
         private string _instructions;
+
+        private bool _presetLoaded;
         
         public LSystemRenderer()
         {
             InitializeComponent();
-            lSystem = new LSystem();
-            lSystem.ReadPresets();
-            _currentPreset = lSystem.Presets[0];
+            LSystem = new LSystem();
+        }
+
+        public void Start()
+        {
+            LSystem.ReadPresets();
+        }
+
+        public void LoadPreset(int index)
+        {
+            _presetLoaded = false;
+            _currentPreset = LSystem.Presets[index];
             _instructions =
-                lSystem.GenerateInstructions(_currentPreset.Axiom, _currentPreset.Iterations, _currentPreset.Rules);
+                LSystem.GenerateInstructions(_currentPreset.Axiom, _currentPreset.Iterations, _currentPreset.Rules);
+            _presetLoaded = true;
+            InvalidateVisual();
+        }
+
+        public void Redraw()
+        {
+            InvalidateVisual();
         }
 
         protected override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);
+            if (!_presetLoaded) return;
             var pen = new Pen
             {
                 Brush = Brushes.Black,

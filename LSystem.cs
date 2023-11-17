@@ -12,6 +12,13 @@ namespace L_System_Renderer
 {
     public class LSystem
     {
+        public event Action onPresetsLoaded;
+
+        public void PresetsLoaded()
+        {
+            onPresetsLoaded?.Invoke();
+        }
+
         public class State
         {
             public double Size;
@@ -49,13 +56,11 @@ namespace L_System_Renderer
 
                 var presetFiles = Directory.GetFiles(presetPath);
 
-                Trace.WriteLine(presetFiles[0]);
 
                 foreach (var presetFile in presetFiles)
                 {
                     using var sr = new StreamReader(presetFile);
                     var text = sr.ReadToEnd();
-                    Trace.WriteLine(text);
 
                     var lines = text.Split('\n', StringSplitOptions.TrimEntries);
                     var preset = new Preset
@@ -105,14 +110,13 @@ namespace L_System_Renderer
                         }
                     }
                     Presets.Add(preset);
-                    Trace.WriteLine("Added Preset");
                 }
             }
             catch (FileNotFoundException ex)
             {
                 Trace.WriteLine(ex.Message);
             }
-            Trace.WriteLine("Finished");
+            PresetsLoaded();
         }
 
         public string GenerateInstructions(string axiom, int iterations, Dictionary<char, string> rules)
