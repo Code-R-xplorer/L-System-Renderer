@@ -1,0 +1,6 @@
+Title: Dragon Curve
+Axiom: FX
+Rules: X=X+YF+,Y=-FX-Y
+Iterations: 10
+Angle: 90
+Constants: +,-,F

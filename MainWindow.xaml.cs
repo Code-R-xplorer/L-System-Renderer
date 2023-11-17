@@ -61,6 +61,7 @@ namespace L_System_Renderer
                     InputGestureText = $"Ctrl + {index + 1}"
                 };
                 PresetsMenu.Items.Add(item);
+                if(index > 9) { continue;}
                 Key key = index switch
                 {
                     0 => Key.D1,
@@ -69,7 +70,11 @@ namespace L_System_Renderer
                     3 => Key.D4,
                     4 => Key.D5,
                     5 => Key.D6,
-                    _ => Key.D0
+                    6 => Key.D7,
+                    7 => Key.D8,
+                    8 => Key.D9,
+                    9 => Key.D0,
+                    _ => throw new ArgumentOutOfRangeException()
                 };
                 var presetKeyBind = new KeyBinding
                 {
