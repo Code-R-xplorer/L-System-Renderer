@@ -1,0 +1,11 @@
+Title: Verification 3
+Axiom: F
+Rules: F=F[+FF][-FF]F[-F][+F]F
+Iterations: 5
+Angle: 35
+Constants: +,-,[,]
+Length: 3
+Angle Growth: 0
+Length Growth: 0
+
+

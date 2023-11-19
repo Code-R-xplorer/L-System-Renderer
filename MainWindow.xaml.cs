@@ -38,6 +38,21 @@ namespace L_System_Renderer
                 Command = Redraw
             });
 
+            EditMenu.Items.Add(new MenuItem
+            {
+                Header = "Brush Settings",
+                IsEnabled = true,
+                Command = OpenBrushSettings
+            });
+
+
+
+            LSystemMenu.Items.Add(new MenuItem
+            {
+                Header = "Change Parameters",
+                Command = OpenParameters
+            });
+
             LSystemMenu.Items.Add(new MenuItem
             {
                 Header = "Next Iteration",
@@ -80,20 +95,36 @@ namespace L_System_Renderer
 
         private void PresetsLoaded()
         {
-            Trace.WriteLine("Hello");
+            var index = -1;
             foreach (var preset in lSystemRenderer.LSystem.Presets)
             {
-                var index = lSystemRenderer.LSystem.Presets.IndexOf(preset);
-                MenuItem item = new MenuItem
+                index++;
+                // var index = lSystemRenderer.LSystem.Presets.IndexOf(preset);
+                if (index < 8)
                 {
-                    Header = preset.Title,
-                    IsEnabled = true,
-                    Command = LoadPreset,
-                    CommandParameter = index,
-                    InputGestureText = $"Ctrl + {index + 1}"
-                };
-                PresetsMenu.Items.Add(item);
-                if(index > 9) { continue;}
+                    var item = new MenuItem
+                    {
+                        Header = preset.Value.Title,
+                        IsEnabled = true,
+                        Command = LoadPreset,
+                        CommandParameter = preset.Key,
+                        InputGestureText = $"Ctrl + {index + 1}"
+                    };
+                    PresetsMenu.Items.Add(item);
+                    
+                }
+                else
+                {
+                    var item = new MenuItem
+                    {
+                        Header = preset.Value.Title,
+                        IsEnabled = true,
+                        Command = LoadPreset,
+                        CommandParameter = preset.Key
+                    };
+                    PresetsMenu.Items.Add(item);
+                }
+                if(index > 7) { continue;}
                 Key key = index switch
                 {
                     0 => Key.D1,
@@ -103,17 +134,14 @@ namespace L_System_Renderer
                     4 => Key.D5,
                     5 => Key.D6,
                     6 => Key.D7,
-                    7 => Key.D8,
-                    8 => Key.D9,
-                    9 => Key.D0,
-                    _ => throw new ArgumentOutOfRangeException()
+                    7 => Key.D8
                 };
                 var presetKeyBind = new KeyBinding
                 {
                     Key = key,
                     Modifiers = ModifierKeys.Control,
                     Command = LoadPreset,
-                    CommandParameter = lSystemRenderer.LSystem.Presets.IndexOf(preset)
+                    CommandParameter = preset.Key
                 };
                 InputBindings.Add(presetKeyBind);
             }
@@ -121,9 +149,8 @@ namespace L_System_Renderer
 
         public ICommand LoadPreset { get; } = new SimpleDelegateCommand((x) =>
         {
-            int index = (int)x;
-            Trace.WriteLine(index);
-            lSystemRenderer.LoadPreset(index);
+            string name = (string)x;
+            lSystemRenderer.LoadPreset(name);
         });
 
         public ICommand Redraw { get; } = new SimpleDelegateCommand((x) =>
@@ -139,6 +166,67 @@ namespace L_System_Renderer
         public ICommand PreviousIteration { get; } = new SimpleDelegateCommand((x) =>
         {
             lSystemRenderer.DecreaseIteration();
+        });
+
+        public ICommand OpenParameters { get; } = new SimpleDelegateCommand((x) =>
+        {
+            if (lSystemRenderer.PresetLoaded())
+            {
+                var preset = lSystemRenderer.CurrentPreset;
+                var parameterWindow = new ParameterWindow(preset.Title, lSystemRenderer);
+                parameterWindow.Title.Content = preset.Title;
+                parameterWindow.Axiom.Text = preset.Axiom;
+
+                string rules = "";
+                foreach (var rule in preset.Rules)
+                {
+                    Trace.WriteLine(rule.Value);
+                    if (rule.Value.Length == 1)
+                    {
+                        var isConstant = false;
+                        foreach (var constant in preset.Constants)
+                        {
+                            if (rule.Value[0] == constant) isConstant = true;
+                        }
+                        if(isConstant) continue;
+                        
+                    }
+                    rules += $"{rule.Key}={rule.Value}\n";
+                    
+                }
+                rules = rules.Substring(0, rules.Length - 1);
+                parameterWindow.Rules.Text = rules;
+                parameterWindow.Iterations.Text = lSystemRenderer.CurrentIterations();
+                parameterWindow.Angle.Text = preset.Angle.ToString();
+                string constants = "";
+                for (int i = 0; i < preset.Constants.Count; i++)
+                {
+                    constants += preset.Constants[i].ToString();
+                    if (i < preset.Constants.Count - 1) constants += ", ";
+                }
+                parameterWindow.Constants.Text = constants;
+                parameterWindow.Length.Text = preset.Length.ToString();
+                parameterWindow.AngleGrowth.Text = preset.AngleGrowth.ToString();
+                parameterWindow.LengthGrowth.Text = preset.LengthGrowth.ToString();
+                parameterWindow.Show();
+            }
+            else
+            {
+                MessageBox.Show("Select a Preset first!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        });
+
+        public ICommand OpenBrushSettings { get; } = new SimpleDelegateCommand((x) =>
+        {
+            if (lSystemRenderer.PresetLoaded())
+            {
+                var brushSettings = new BrushSettings(lSystemRenderer);
+                brushSettings.Show();
+            }
+            else
+            {
+                MessageBox.Show("Select a Preset first!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         });
     }
 

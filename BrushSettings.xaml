@@ -1,0 +1,35 @@
+﻿<Window x:Class="L_System_Renderer.BrushSettings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:L_System_Renderer"
+        mc:Ignorable="d"
+        Title="Brush Settings" Height="400" Width="400">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Label Grid.Column="0" Grid.Row="0">
+            Brush Colour
+        </Label>
+        <Label Grid.Column="0" Grid.Row="1">
+            Brush Thickness
+        </Label>
+        <ComboBox Grid.Column="1" Grid.Row="0" x:Name="Colours" DropDownClosed="Colours_OnDropDownClosed">
+            <ComboBoxItem>Black</ComboBoxItem>
+            <ComboBoxItem>Blue</ComboBoxItem>
+            <ComboBoxItem>Red</ComboBoxItem>
+            <ComboBoxItem>Yellow</ComboBoxItem>
+            <ComboBoxItem>Green</ComboBoxItem>
+            <ComboBoxItem>Cyan</ComboBoxItem>
+        </ComboBox>
+        <TextBox Grid.Column="1" Grid.Row="1" x:Name="Thickness" KeyDown="Thickness_OnKeyDown"></TextBox>
+    </Grid>
+</Window>

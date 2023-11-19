@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml.Linq;
 
 namespace L_System_Renderer
 {
@@ -23,13 +24,14 @@ namespace L_System_Renderer
     public partial class LSystemRenderer : Page
     {
         public LSystem LSystem;
-        private Preset _currentPreset;
+        public Preset CurrentPreset;
         private string _instructions;
         private int _currentIterations = 0;
 
         private bool _presetLoaded;
 
-        private double _brushThickness = 0.3;
+        public double BrushThickness = 0.3;
+        public Brush Brush = Brushes.Black;
         
         public LSystemRenderer()
         {
@@ -42,47 +44,78 @@ namespace L_System_Renderer
             LSystem.ReadPresets();
         }
 
-        public void LoadPreset(int index)
+        public void LoadPreset(string name)
         {
             _presetLoaded = false;
-            _currentPreset = LSystem.Presets[index];
-            _currentIterations = _currentPreset.Iterations;
+            CurrentPreset = LSystem.Presets[name].Clone();
+            _currentIterations = CurrentPreset.Iterations;
             _instructions =
-                LSystem.GenerateInstructions(_currentPreset.Axiom, _currentIterations, _currentPreset.Rules);
+                LSystem.GenerateInstructions(CurrentPreset.Axiom, _currentIterations, CurrentPreset.Rules);
             _presetLoaded = true;
-            InvalidateVisual();
+            Redraw();
+        }
+
+        public void ReloadCurrentPreset()
+        {
+            _presetLoaded = false;
+            _currentIterations = CurrentPreset.Iterations;
+            _instructions =
+                LSystem.GenerateInstructions(CurrentPreset.Axiom, _currentIterations, CurrentPreset.Rules);
+            _presetLoaded = true;
+            Redraw();
         }
 
         public void Redraw()
         {
+            if (!_presetLoaded)
+            {
+                MessageBox.Show("Select a Preset first!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             InvalidateVisual();
         }
 
         public void IncreaseIteration()
         {
+            if (!_presetLoaded)
+            {
+                MessageBox.Show("Select a Preset first!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            if (_currentIterations == 10)
+            {
+                MessageBox.Show("Cannot go above 10 iterations, please use the parameters menu", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
             _currentIterations++;
             _instructions =
-                LSystem.GenerateInstructions(_currentPreset.Axiom, _currentIterations, _currentPreset.Rules);
+                LSystem.GenerateInstructions(CurrentPreset.Axiom, _currentIterations, CurrentPreset.Rules);
             Redraw();
         }
 
         public void DecreaseIteration()
         {
-            if (_currentIterations == 0) { return; }
+            if (!_presetLoaded)
+            {
+                MessageBox.Show("Select a Preset first!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            if (_currentIterations == 0)
+            {
+                MessageBox.Show("Cannot go below 0 iterations", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
             _currentIterations--;
             _instructions =
-                LSystem.GenerateInstructions(_currentPreset.Axiom, _currentIterations, _currentPreset.Rules);
+                LSystem.GenerateInstructions(CurrentPreset.Axiom, _currentIterations, CurrentPreset.Rules);
             Redraw();
         }
 
         public bool PresetLoaded()
         {
             return _presetLoaded;
-        }
-
-        public Preset CurrentPreset()
-        {
-            return _currentPreset;
         }
 
         public string CurrentIterations()
@@ -96,8 +129,8 @@ namespace L_System_Renderer
             if (!_presetLoaded) return;
             var pen = new Pen
             {
-                Brush = Brushes.Black,
-                Thickness = _brushThickness,
+                Brush = Brush,
+                Thickness = BrushThickness,
                 EndLineCap = PenLineCap.Round,
                 StartLineCap = PenLineCap.Round
             };
@@ -112,8 +145,8 @@ namespace L_System_Renderer
             {
                 Position = new Point(0, 0),
                 Direction = new Point(0, -1),
-                Angle = _currentPreset.Angle,
-                Size = 1
+                Angle = CurrentPreset.Angle,
+                Size = CurrentPreset.Length
             };
 
             using (DrawingContext dc = dGroup.Open())
@@ -159,6 +192,18 @@ namespace L_System_Renderer
                             break;
                         case '!':
                             state.Angle *= -1;
+                            break;
+                        case ')':
+                            state.Angle *= (1.0 + CurrentPreset.AngleGrowth);
+                            break;
+                        case '(':
+                            state.Angle *= (1.0 - CurrentPreset.AngleGrowth);
+                            break;
+                        case '>':
+                            state.Size *= (1.0 + CurrentPreset.LengthGrowth);
+                            break;
+                        case '<':
+                            state.Size *= (1.0 - CurrentPreset.LengthGrowth);
                             break;
                     }
                 }

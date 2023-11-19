@@ -4,3 +4,6 @@ Rules: X=F[+X][-X]FX,F=FF
 Iterations: 7
 Angle: 25.7
 Constants: +,-,[,]
+Length: 1
+Angle Growth: 0
+Length Growth: 0

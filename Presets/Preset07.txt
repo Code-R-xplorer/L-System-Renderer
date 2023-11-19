@@ -4,3 +4,6 @@ Rules: X=X+YF+,Y=-FX-Y
 Iterations: 10
 Angle: 90
 Constants: +,-,F
+Length: 1
+Angle Growth: 0
+Length Growth: 0

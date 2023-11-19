@@ -1,0 +1,11 @@
+Title: Verification 1
+Axiom: F+F+F
+Rules: F=F-F+F
+Iterations: 7
+Angle: 120
+Constants: +,-
+Length: 5
+Angle Growth: 0
+Length Growth: 0
+
+

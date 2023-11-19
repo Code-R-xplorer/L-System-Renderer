@@ -1,0 +1,11 @@
+Title: Pollenate
+Axiom: L
+Rules: L=S,S=F+>[F-Y[S]]F)G,Y=--[|F-F-FY],G=FGY[+F]+Y
+Iterations: 30
+Angle: -3669.39
+Constants: +,-,[,],>,),|,F
+Length: 9
+Angle Growth: -0.055313
+Length Growth: 0.0001
+
+

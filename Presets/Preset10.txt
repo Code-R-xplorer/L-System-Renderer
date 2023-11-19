@@ -1,0 +1,11 @@
+Title: Bush
+Axiom: Y
+Rules: X=X[-FFF][+FFF]FX,Y=YFX[+Y][-Y]
+Iterations: 5
+Angle: 25.7
+Constants: +,-,[,],F
+Length: 1
+Angle Growth: 0
+Length Growth: 0
+
+

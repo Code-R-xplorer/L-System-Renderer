@@ -4,3 +4,6 @@ Rules: F=FF-[-F+F+F]+[+F-F-F]
 Iterations: 5
 Angle: 22.5
 Constants: +,-,[,]
+Length: 1
+Angle Growth: 0
+Length Growth: 0

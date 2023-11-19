@@ -14,6 +14,10 @@ namespace L_System_Renderer
         public int Iterations;
         public double Angle;
         public List<char> Constants;
-
+        public double Length;
+        public double AngleGrowth;
+        public double LengthGrowth;
+        public Preset Clone() { return (Preset)MemberwiseClone(); }
+        
     }
 }

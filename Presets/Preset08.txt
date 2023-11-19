@@ -4,3 +4,6 @@ Rules: V=[+++W][---W]YV,W=+X[-W]Z,X=-W[+X]Z,Y=YZ,Z=[-FFF][+FFF]F
 Iterations: 10
 Angle: 20
 Constants: +,-,[,],F
+Length: 15
+Angle Growth: 0
+Length Growth: 0
