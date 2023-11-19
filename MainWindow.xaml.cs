@@ -15,6 +15,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Path = System.IO.Path;
+using System.Reflection;
+using System.Data;
 
 namespace L_System_Renderer
 {
@@ -34,6 +36,36 @@ namespace L_System_Renderer
                 Header = "Redraw",
                 IsEnabled = true,
                 Command = Redraw
+            });
+
+            LSystemMenu.Items.Add(new MenuItem
+            {
+                Header = "Next Iteration",
+                IsEnabled = true,
+                Command = NextIteration,
+                InputGestureText = "Ctrl + ]"
+            });
+
+            LSystemMenu.Items.Add(new MenuItem
+            {
+                Header = "Previous Iteration",
+                IsEnabled = true,
+                Command = PreviousIteration,
+                InputGestureText = "Ctrl + ["
+            });
+
+            InputBindings.Add(new KeyBinding
+            {
+                Key = Key.OemCloseBrackets,
+                Modifiers = ModifierKeys.Control,
+                Command = NextIteration
+            });
+
+            InputBindings.Add(new KeyBinding
+            {
+                Key = Key.OemOpenBrackets,
+                Modifiers = ModifierKeys.Control,
+                Command = PreviousIteration
             });
 
             lSystemRenderer = new LSystemRenderer();
@@ -97,6 +129,16 @@ namespace L_System_Renderer
         public ICommand Redraw { get; } = new SimpleDelegateCommand((x) =>
         {
             lSystemRenderer.Redraw();
+        });
+
+        public ICommand NextIteration { get; } = new SimpleDelegateCommand((x) =>
+        {
+            lSystemRenderer.IncreaseIteration();
+        });
+
+        public ICommand PreviousIteration { get; } = new SimpleDelegateCommand((x) =>
+        {
+            lSystemRenderer.DecreaseIteration();
         });
     }
 

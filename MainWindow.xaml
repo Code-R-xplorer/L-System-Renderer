@@ -16,7 +16,8 @@
             <MenuItem Header="_File">
                 <MenuItem Command="ApplicationCommands.Open"></MenuItem>
             </MenuItem>
-            <MenuItem Header="_Edit" x:Name="EditMenu"/>
+            <MenuItem Header="_Edit" x:Name="EditMenu" />
+            <MenuItem Header="_Current System" x:Name="LSystemMenu"/>
             <MenuItem Header="_Presets" x:Name="PresetsMenu"/>
         </Menu>
 

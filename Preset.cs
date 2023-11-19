@@ -13,7 +13,7 @@ namespace L_System_Renderer
         public Dictionary<char, string> Rules;
         public int Iterations;
         public double Angle;
-        public char[] Constants;
+        public List<char> Constants;
 
     }
 }

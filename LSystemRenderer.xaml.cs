@@ -25,8 +25,11 @@ namespace L_System_Renderer
         public LSystem LSystem;
         private Preset _currentPreset;
         private string _instructions;
+        private int _currentIterations = 0;
 
         private bool _presetLoaded;
+
+        private double _brushThickness = 0.3;
         
         public LSystemRenderer()
         {
@@ -43,8 +46,9 @@ namespace L_System_Renderer
         {
             _presetLoaded = false;
             _currentPreset = LSystem.Presets[index];
+            _currentIterations = _currentPreset.Iterations;
             _instructions =
-                LSystem.GenerateInstructions(_currentPreset.Axiom, _currentPreset.Iterations, _currentPreset.Rules);
+                LSystem.GenerateInstructions(_currentPreset.Axiom, _currentIterations, _currentPreset.Rules);
             _presetLoaded = true;
             InvalidateVisual();
         }
@@ -54,6 +58,38 @@ namespace L_System_Renderer
             InvalidateVisual();
         }
 
+        public void IncreaseIteration()
+        {
+            _currentIterations++;
+            _instructions =
+                LSystem.GenerateInstructions(_currentPreset.Axiom, _currentIterations, _currentPreset.Rules);
+            Redraw();
+        }
+
+        public void DecreaseIteration()
+        {
+            if (_currentIterations == 0) { return; }
+            _currentIterations--;
+            _instructions =
+                LSystem.GenerateInstructions(_currentPreset.Axiom, _currentIterations, _currentPreset.Rules);
+            Redraw();
+        }
+
+        public bool PresetLoaded()
+        {
+            return _presetLoaded;
+        }
+
+        public Preset CurrentPreset()
+        {
+            return _currentPreset;
+        }
+
+        public string CurrentIterations()
+        {
+            return _currentIterations.ToString();
+        }
+
         protected override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);
@@ -61,8 +97,7 @@ namespace L_System_Renderer
             var pen = new Pen
             {
                 Brush = Brushes.Black,
-                Thickness = 0.3f,
-                // pen.LineJoin = PenLineJoin.Round;
+                Thickness = _brushThickness,
                 EndLineCap = PenLineCap.Round,
                 StartLineCap = PenLineCap.Round
             };

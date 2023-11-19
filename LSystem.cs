@@ -65,10 +65,13 @@ namespace L_System_Renderer
                     var lines = text.Split('\n', StringSplitOptions.TrimEntries);
                     var preset = new Preset
                     {
-                        Rules = new Dictionary<char, string>()
+                        Rules = new Dictionary<char, string>(),
+                        Constants = new List<char>()
                     };
                     foreach (var line in lines)
                     {
+                        if(line.Length == 0) continue;
+                        if (line[0] == '#') continue;
                         var contents = line.Split(':', StringSplitOptions.TrimEntries);
                         if (contents[0] == "Title")
                         {
@@ -105,6 +108,7 @@ namespace L_System_Renderer
                             var constants = contents[1].Split(",");
                             foreach (var constant in constants)
                             {
+                                preset.Constants.Add(Convert.ToChar(constant));
                                 preset.Rules.Add(Convert.ToChar(constant), constant);
                             }
                         }
