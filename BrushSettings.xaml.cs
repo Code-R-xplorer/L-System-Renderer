@@ -1,16 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace L_System_Renderer
 {
@@ -25,6 +16,7 @@ namespace L_System_Renderer
             _renderer = renderer;
             InitializeComponent();
             Thickness.Text = _renderer.BrushThickness.ToString();
+            // Update the dropdown to display the current brush colour
             if (_renderer.Brush == Brushes.Black)
             {
                 Colours.SelectedIndex = 0;
@@ -54,6 +46,8 @@ namespace L_System_Renderer
 
         private void Thickness_OnKeyDown(object sender, KeyEventArgs e)
         {
+            // If the user presses enter when thickness TextBox is selected
+            // assign the new thickness and redraw.
             if (e.Key == Key.Enter)
             {
                 _renderer.BrushThickness = Convert.ToDouble(Thickness.Text);
@@ -64,6 +58,8 @@ namespace L_System_Renderer
 
         private void Colours_OnDropDownClosed(object? sender, EventArgs e)
         {
+            // Once the dropdown has been closed assign the selected colour
+            // to the brush and redraw
             switch (Colours.Text)
             {
                 case "Black":

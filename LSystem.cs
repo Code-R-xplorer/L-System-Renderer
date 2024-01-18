@@ -3,22 +3,21 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data;
 
 namespace L_System_Renderer
 {
     public class LSystem
     {
-        public event Action onPresetsLoaded;
+        // Preset Loaded Event
+        public event Action onPresetsLoaded; // Other classes subscribe to this
 
+        // Invoke the event for any class that has subscribed to it
         public void PresetsLoaded()
         {
             onPresetsLoaded?.Invoke();
         }
 
+        // Used to keep track of the drawing states
         public class State
         {
             public double Size;
@@ -27,19 +26,6 @@ namespace L_System_Renderer
             public Point Direction;
 
             public State Clone() { return (State)this.MemberwiseClone(); }
-        }
-
-        public string ReWrite(string start, Dictionary<char, string> rules)
-        {
-            var outString = "";
-
-            foreach (var c in start)
-            {
-                var s = rules[c];
-                outString += s;
-            }
-
-            return outString;
         }
 
         public Dictionary<string, Preset> Presets = new();
@@ -56,7 +42,7 @@ namespace L_System_Renderer
 
                 var presetFiles = Directory.GetFiles(presetPath);
 
-                if (presetFiles.Length == 0)
+                if (presetFiles.Length == 0) // Couldn't find preset files
                 {
                     MessageBoxResult messageBoxResult = MessageBox.Show("No preset files found!\nPlease add the preset files to the Presets folder", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     if (messageBoxResult == MessageBoxResult.OK)
@@ -80,8 +66,9 @@ namespace L_System_Renderer
                     };
                     foreach (var line in lines)
                     {
-                        if (line.Length == 0) continue;
-                        if (line[0] == '#') continue;
+                        if (line.Length == 0) continue; // Skip blank lines
+                        if (line[0] == '#') continue; // '#' represents comments in a preset file
+                        // Every variable in a preset file is separated by ':'
                         var contents = line.Split(':', StringSplitOptions.TrimEntries);
                         if (contents[0] == "Title")
                         {
@@ -142,7 +129,8 @@ namespace L_System_Renderer
                     Presets.Add(preset.Title, preset);
                 }
             }
-            catch (FileNotFoundException ex)
+            // Error catching
+            catch (FileNotFoundException ex) // Tried getting a non-existent file 
             {
                 MessageBoxResult messageBoxResult = MessageBox.Show($"Could not find file\n{ex.Message}", "File Not Found", MessageBoxButton.OK, MessageBoxImage.Error);
                 if (messageBoxResult == MessageBoxResult.OK)
@@ -151,7 +139,7 @@ namespace L_System_Renderer
                 }
                 Trace.WriteLine(ex.Message);
             }
-            catch (DirectoryNotFoundException ex)
+            catch (DirectoryNotFoundException ex) // Couldn't find a directory
             {
                 MessageBoxResult messageBoxResult = MessageBox.Show($"Could not find directory\n{ex.Message}", "Directory Not Found", MessageBoxButton.OK, MessageBoxImage.Error);
                 if (messageBoxResult == MessageBoxResult.OK)
@@ -160,7 +148,7 @@ namespace L_System_Renderer
                 }
                 Trace.WriteLine(ex.Message);
             }
-            catch (UnauthorizedAccessException ex)
+            catch (UnauthorizedAccessException ex) // Not allowed to access directory
             {
                 MessageBoxResult messageBoxResult = MessageBox.Show($"Could not access directory or file\n{ex.Message}", "Access Violation", MessageBoxButton.OK, MessageBoxImage.Error);
                 if (messageBoxResult == MessageBoxResult.OK)
@@ -169,7 +157,20 @@ namespace L_System_Renderer
                 }
                 Trace.WriteLine(ex.Message);
             }
-            PresetsLoaded();
+            PresetsLoaded(); // Trigger event as all loaded without errors
+        }
+
+        private string ReWrite(string start, Dictionary<char, string> rules)
+        {
+            var outString = "";
+
+            foreach (var c in start)
+            {
+                var s = rules[c];
+                outString += s;
+            }
+
+            return outString;
         }
 
         public string GenerateInstructions(string axiom, int iterations, Dictionary<char, string> rules)

@@ -1,17 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace L_System_Renderer
 {
@@ -20,17 +9,59 @@ namespace L_System_Renderer
     /// </summary>
     public partial class ParameterWindow : Window
     {
-        private string _presetName;
         private LSystemRenderer _lSystemRenderer;
 
-        public ParameterWindow(string presetName, LSystemRenderer lSystemRenderer)
+        public ParameterWindow(LSystemRenderer lSystemRenderer)
         {
-            _presetName = presetName;
             _lSystemRenderer = lSystemRenderer;
             InitializeComponent();
         }
 
+        public void SetupWindow()
+        {
+            var preset = _lSystemRenderer.CurrentPreset; // Get the current loaded preset
 
+            // Title is a Label not a TextBox so preset name is assigned via Content not Text
+            // Label.Content = <Content>
+            // TextBox.Text = <Content>
+            Title.Content = preset.Title;
+            Axiom.Text = preset.Axiom;
+            
+            // Create Rules string 
+            string rules = "";
+            foreach (var rule in preset.Rules)
+            {
+                if (rule.Value.Length == 1)
+                {
+                    // Don't include any constants from the rules dictionary in the rules section
+                    var isConstant = false;
+                    foreach (var constant in preset.Constants)
+                    {
+                        if (rule.Value[0] == constant) isConstant = true;
+                    }
+                    if (isConstant) continue;
+
+                }
+                rules += $"{rule.Key}={rule.Value}\n";
+
+            }
+            rules = rules[..^1]; // Removed the last new line character
+            Rules.Text = rules;
+            Iterations.Text = _lSystemRenderer.CurrentIterations();
+            Angle.Text = preset.Angle.ToString();
+            string constants = "";
+            for (int i = 0; i < preset.Constants.Count; i++)
+            {
+                constants += preset.Constants[i].ToString();
+                // Only add separator if not last constant
+                if (i < preset.Constants.Count - 1) constants += ", ";
+            }
+            Constants.Text = constants;
+            Length.Text = preset.Length.ToString();
+            AngleGrowth.Text = preset.AngleGrowth.ToString();
+            LengthGrowth.Text = preset.LengthGrowth.ToString();
+            Show(); // Display the window was all text has been set
+        }
 
         private void ApplyAxiom()
         {
@@ -40,6 +71,8 @@ namespace L_System_Renderer
         private void ApplyIterations()
         {
             var iterations = Convert.ToInt32(Iterations.Text);
+            // Large iterations can slow the program, so we check with the user
+            // if they are happy to continue
             if (iterations > 10)
             {
                 MessageBoxResult messageBoxResult =
@@ -49,6 +82,7 @@ namespace L_System_Renderer
                 {
                     _lSystemRenderer.CurrentPreset.Iterations = iterations;
                 }
+                // If they select No then set the iterations back to what it was before
                 else
                 {
                     Iterations.Text = _lSystemRenderer.CurrentPreset.Iterations.ToString();
@@ -73,7 +107,6 @@ namespace L_System_Renderer
             {
                 var split = rule.Split('=', StringSplitOptions.TrimEntries);
                 rulesDict.Add(split[0][0], split[1]);
-                Trace.WriteLine(split[0][0]);
             }
 
             var constants = Constants.Text.Split(",", StringSplitOptions.TrimEntries);
@@ -83,7 +116,6 @@ namespace L_System_Renderer
             {
                 rulesDict.Add(constant[0], constant);
                 constantsChar.Add(constant[0]);
-                Trace.Write(constant[0]);
             }
             _lSystemRenderer.CurrentPreset.Rules = rulesDict;
             _lSystemRenderer.CurrentPreset.Constants = constantsChar;

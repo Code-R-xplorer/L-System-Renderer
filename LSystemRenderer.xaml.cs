@@ -1,20 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Xml.Linq;
 
 namespace L_System_Renderer
 {
@@ -26,12 +14,13 @@ namespace L_System_Renderer
         public LSystem LSystem;
         public Preset CurrentPreset;
         private string _instructions;
-        private int _currentIterations = 0;
+        private int _currentIterations;
 
-        private bool _presetLoaded;
+        // Prevents rendering when a preset hasn't been loaded
+        private bool _presetLoaded; 
 
-        public double BrushThickness = 0.3;
-        public Brush Brush = Brushes.Black;
+        public double BrushThickness = 0.3; // Default Thickness
+        public Brush Brush = Brushes.Black; // Default Colour
         
         public LSystemRenderer()
         {
@@ -47,6 +36,7 @@ namespace L_System_Renderer
         public void LoadPreset(string name)
         {
             _presetLoaded = false;
+            // Preset is Cloned to prevent updating preset within the dictionary
             CurrentPreset = LSystem.Presets[name].Clone();
             _currentIterations = CurrentPreset.Iterations;
             _instructions =
@@ -139,6 +129,7 @@ namespace L_System_Renderer
             // Create a DrawingGroup
             DrawingGroup dGroup = new DrawingGroup();
 
+            // Create empty stack to track drawing states
             var states = new Stack<LSystem.State>();
 
             LSystem.State state = new LSystem.State
@@ -156,54 +147,54 @@ namespace L_System_Renderer
                     double angle;
                     switch (c)
                     {
-                        case 'F':
+                        case 'F': // Forward and Draw
                             var dx = state.Direction.X * state.Size;
                             var dy = state.Direction.Y * state.Size;
                             var newPos = new Point(state.Position.X + dx, state.Position.Y + dy);
                             dc.DrawLine(pen, state.Position, newPos);
                             state.Position = newPos;
                             break;
-                        case 'f':
+                        case 'f': // Forward but don't draw
                             var distanceX = state.Direction.X * state.Size;
                             var distanceY = state.Direction.Y * state.Size;
                             state.Position = new Point(state.Position.X + distanceX, state.Position.Y + distanceY);
                             break;
-                        case '+':
+                        case '+': // Rotate right by angle
                             angle = state.Angle * Math.PI / 180.0;
                             angle *= -1;
                             state.Direction = new Point(state.Direction.X * Math.Cos(angle) - state.Direction.Y * Math.Sin(angle),
                                 state.Direction.X * Math.Sin(angle) + state.Direction.Y * Math.Cos(angle));
                             break;
-                        case '-':
+                        case '-': // Rotate left by angle
                             angle = state.Angle * Math.PI / 180.0;
                             state.Direction = new Point(state.Direction.X * Math.Cos(angle) - state.Direction.Y * Math.Sin(angle),
                                 state.Direction.X * Math.Sin(angle) + state.Direction.Y * Math.Cos(angle));
                             break;
-                        case '[':
+                        case '[': // Save current drawing state
                             states.Push(state.Clone());
                             break;
-                        case ']':
+                        case ']': // Revert back to previous saved drawing state
                             state = states.Pop();
                             break;
-                        case '|':
+                        case '|': // Face opposite direction
                             angle = 180 * Math.PI / 180.0;
                             state.Direction = new Point(state.Direction.X * Math.Cos(angle) - state.Direction.Y * Math.Sin(angle),
                                 state.Direction.X * Math.Sin(angle) + state.Direction.Y * Math.Cos(angle));
                             break;
-                        case '!':
+                        case '!': // Inverse current angle, if + turned left then it will turn right and vice versa
                             state.Angle *= -1;
                             break;
-                        case ')':
-                            state.Angle *= (1.0 + CurrentPreset.AngleGrowth);
+                        case ')': // Increase turning angle by angle growth
+                            state.Angle *= 1.0 + CurrentPreset.AngleGrowth;
                             break;
-                        case '(':
-                            state.Angle *= (1.0 - CurrentPreset.AngleGrowth);
+                        case '(': // Decrease turning angle by angle growth
+                            state.Angle *= 1.0 - CurrentPreset.AngleGrowth;
                             break;
-                        case '>':
-                            state.Size *= (1.0 + CurrentPreset.LengthGrowth);
+                        case '>': // Increase draw length by length growth
+                            state.Size *= 1.0 + CurrentPreset.LengthGrowth;
                             break;
-                        case '<':
-                            state.Size *= (1.0 - CurrentPreset.LengthGrowth);
+                        case '<': // Decrease draw length by length growth
+                            state.Size *= 1.0 - CurrentPreset.LengthGrowth;
                             break;
                     }
                 }
@@ -213,6 +204,7 @@ namespace L_System_Renderer
             Image theImage = new Image();
             DrawingImage dImageSource = new DrawingImage(dGroup);
             theImage.Source = dImageSource;
+            theImage.Stretch = Stretch.Uniform;
 
             this.Content = theImage;
 
