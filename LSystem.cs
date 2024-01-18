@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.IO;
+using System.Text;
 
 namespace L_System_Renderer
 {
@@ -160,14 +161,13 @@ namespace L_System_Renderer
             PresetsLoaded(); // Trigger event as all loaded without errors
         }
 
-        private string ReWrite(string start, Dictionary<char, string> rules)
+        private StringBuilder ReWrite(StringBuilder start, Dictionary<char, string> rules)
         {
-            var outString = "";
+            var outString = new StringBuilder();
 
-            foreach (var c in start)
+            foreach (var c in start.ToString())
             {
-                var s = rules[c];
-                outString += s;
+                outString.Append(rules[c]);
             }
 
             return outString;
@@ -175,13 +175,13 @@ namespace L_System_Renderer
 
         public string GenerateInstructions(string axiom, int iterations, Dictionary<char, string> rules)
         {
-            var s = axiom;
+            var sb = new StringBuilder(axiom);
             for (int i = 0; i < iterations; i++)
             {
-                s = ReWrite(s, rules);
+                sb = ReWrite(sb, rules);
             }
 
-            return s;
+            return sb.ToString();
         }
     }
 }
