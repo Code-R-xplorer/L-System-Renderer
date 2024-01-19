@@ -9,11 +9,11 @@ namespace L_System_Renderer
     /// <summary>
     /// Interaction logic for LSystemRenderer.xaml
     /// </summary>
-    public partial class LSystemRenderer : Page
+    public partial class LSystemRenderer
     {
         public LSystem LSystem;
-        public Preset CurrentPreset;
-        private string _instructions;
+        public Preset CurrentPreset = null!;
+        private string _instructions = null!;
         private int _currentIterations;
 
         // Prevents rendering when a preset hasn't been loaded

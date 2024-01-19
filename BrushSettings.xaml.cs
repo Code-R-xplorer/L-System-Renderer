@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Windows;
+using System.Globalization;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -8,14 +8,14 @@ namespace L_System_Renderer
     /// <summary>
     /// Interaction logic for BrushSettings.xaml
     /// </summary>
-    public partial class BrushSettings : Window
+    public partial class BrushSettings
     {
-        private LSystemRenderer _renderer;
+        private readonly LSystemRenderer _renderer;
         public BrushSettings(LSystemRenderer renderer)
         {
             _renderer = renderer;
             InitializeComponent();
-            Thickness.Text = _renderer.BrushThickness.ToString();
+            Thickness.Text = _renderer.BrushThickness.ToString(CultureInfo.InvariantCulture);
             // Update the dropdown to display the current brush colour
             if (_renderer.Brush == Brushes.Black)
             {

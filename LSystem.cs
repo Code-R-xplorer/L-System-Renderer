@@ -10,12 +10,12 @@ namespace L_System_Renderer
     public class LSystem
     {
         // Preset Loaded Event
-        public event Action onPresetsLoaded; // Other classes subscribe to this
+        public event Action? OnPresetsLoaded; // Other classes subscribe to this
 
         // Invoke the event for any class that has subscribed to it
         public void PresetsLoaded()
         {
-            onPresetsLoaded?.Invoke();
+            OnPresetsLoaded?.Invoke();
         }
 
         // Used to keep track of the drawing states
@@ -60,11 +60,14 @@ namespace L_System_Renderer
                     var text = sr.ReadToEnd();
 
                     var lines = text.Split('\n', StringSplitOptions.TrimEntries);
-                    var preset = new Preset
-                    {
-                        Rules = new Dictionary<char, string>(),
-                        Constants = new List<char>()
-                    };
+
+                    string title = "", axiom = "";
+                    Dictionary<char, string> rulesDict = new();
+                    int iterations = 0;
+                    double angle = 0.0, length = 0.0, angleGrowth = 0.0, lengthGrowth = 0.0;
+                    List<char> constantsList = new();
+
+
                     foreach (var line in lines)
                     {
                         if (line.Length == 0) continue; // Skip blank lines
@@ -73,12 +76,12 @@ namespace L_System_Renderer
                         var contents = line.Split(':', StringSplitOptions.TrimEntries);
                         if (contents[0] == "Title")
                         {
-                            preset.Title = contents[1];
+                            title = contents[1];
                         }
 
                         if (contents[0] == "Axiom")
                         {
-                            preset.Axiom = contents[1];
+                            axiom = contents[1];
                         }
 
                         if (contents[0] == "Rules")
@@ -87,18 +90,18 @@ namespace L_System_Renderer
                             foreach (var rule in rules)
                             {
                                 var split = rule.Split('=');
-                                preset.Rules.Add(split[0][0], split[1]);
+                                rulesDict.Add(split[0][0], split[1]);
                             }
                         }
 
                         if (contents[0] == "Iterations")
                         {
-                            preset.Iterations = Convert.ToInt32(contents[1]);
+                            iterations = Convert.ToInt32(contents[1]);
                         }
 
                         if (contents[0] == "Angle")
                         {
-                            preset.Angle = Convert.ToDouble(contents[1]);
+                            angle = Convert.ToDouble(contents[1]);
                         }
 
                         if (contents[0] == "Constants")
@@ -106,28 +109,31 @@ namespace L_System_Renderer
                             var constants = contents[1].Split(",");
                             foreach (var constant in constants)
                             {
-                                preset.Constants.Add(constant[0]);
-                                preset.Rules.Add(constant[0], constant);
+                                constantsList.Add(constant[0]);
+                                rulesDict.Add(constant[0], constant);
                             }
                         }
 
                         if (contents[0] == "Length")
                         {
-                            preset.Length = Convert.ToDouble(contents[1]);
+                            length = Convert.ToDouble(contents[1]);
                         }
 
                         if (contents[0] == "Length Growth")
                         {
-                            preset.LengthGrowth = Convert.ToDouble(contents[1]);
+                            lengthGrowth = Convert.ToDouble(contents[1]);
                         }
 
                         if (contents[0] == "Angle Growth")
                         {
-                            preset.AngleGrowth = Convert.ToDouble(contents[1]);
+                            angleGrowth = Convert.ToDouble(contents[1]);
                         }
                     }
 
-                    Presets.Add(preset.Title, preset);
+                    var preset = new Preset(title, axiom, rulesDict, iterations, angle, constantsList, length,
+                        angleGrowth, lengthGrowth);
+
+                    Presets.Add(title, preset);
                 }
             }
             // Error catching

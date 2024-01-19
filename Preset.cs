@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace L_System_Renderer
 {
@@ -17,6 +13,20 @@ namespace L_System_Renderer
         public double Length;
         public double AngleGrowth;
         public double LengthGrowth;
+
+        public Preset(string title, string axiom, Dictionary<char, string> rules, int iterations, double angle, List<char> constants, double length, double angleGrowth, double lengthGrowth)
+        {
+            Title = title;
+            Axiom = axiom;
+            Rules = rules;
+            Iterations = iterations;
+            Angle = angle;
+            Constants = constants;
+            Length = length;
+            AngleGrowth = angleGrowth;
+            LengthGrowth = lengthGrowth;
+        }
+
         public Preset Clone() { return (Preset)MemberwiseClone(); }
         
     }

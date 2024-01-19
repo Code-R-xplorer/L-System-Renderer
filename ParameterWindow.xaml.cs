@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Windows;
 
 namespace L_System_Renderer
@@ -7,11 +9,11 @@ namespace L_System_Renderer
     /// <summary>
     /// Interaction logic for ParameterWindow.xaml
     /// </summary>
-    public partial class ParameterWindow : Window
+    public partial class ParameterWindow
     {
-        private LSystemRenderer _lSystemRenderer;
+        private readonly LSystemRenderer? _lSystemRenderer;
 
-        public ParameterWindow(LSystemRenderer lSystemRenderer)
+        public ParameterWindow(LSystemRenderer? lSystemRenderer)
         {
             _lSystemRenderer = lSystemRenderer;
             InitializeComponent();
@@ -19,6 +21,7 @@ namespace L_System_Renderer
 
         public void SetupWindow()
         {
+            Debug.Assert(_lSystemRenderer != null, nameof(_lSystemRenderer) + " != null");
             var preset = _lSystemRenderer.CurrentPreset; // Get the current loaded preset
 
             // Title is a Label not a TextBox so preset name is assigned via Content not Text
@@ -48,7 +51,7 @@ namespace L_System_Renderer
             rules = rules[..^1]; // Removed the last new line character
             Rules.Text = rules;
             Iterations.Text = _lSystemRenderer.CurrentIterations();
-            Angle.Text = preset.Angle.ToString();
+            Angle.Text = preset.Angle.ToString(CultureInfo.InvariantCulture);
             string constants = "";
             for (int i = 0; i < preset.Constants.Count; i++)
             {
@@ -57,19 +60,21 @@ namespace L_System_Renderer
                 if (i < preset.Constants.Count - 1) constants += ", ";
             }
             Constants.Text = constants;
-            Length.Text = preset.Length.ToString();
-            AngleGrowth.Text = preset.AngleGrowth.ToString();
-            LengthGrowth.Text = preset.LengthGrowth.ToString();
+            Length.Text = preset.Length.ToString(CultureInfo.InvariantCulture);
+            AngleGrowth.Text = preset.AngleGrowth.ToString(CultureInfo.InvariantCulture);
+            LengthGrowth.Text = preset.LengthGrowth.ToString(CultureInfo.InvariantCulture);
             Show(); // Display the window was all text has been set
         }
 
         private void ApplyAxiom()
         {
+            Debug.Assert(_lSystemRenderer != null, nameof(_lSystemRenderer) + " != null");
             _lSystemRenderer.CurrentPreset.Axiom = Axiom.Text;
         }
 
         private void ApplyIterations()
         {
+            Debug.Assert(_lSystemRenderer != null, nameof(_lSystemRenderer) + " != null");
             var iterations = Convert.ToInt32(Iterations.Text);
             // Large iterations can slow the program, so we check with the user
             // if they are happy to continue
@@ -96,11 +101,13 @@ namespace L_System_Renderer
 
         private void ApplyAngle()
         {
+            Debug.Assert(_lSystemRenderer != null, nameof(_lSystemRenderer) + " != null");
             _lSystemRenderer.CurrentPreset.Angle = Convert.ToDouble(Angle.Text);
         }
 
         private void ApplyRulesConstants()
         {
+            Debug.Assert(_lSystemRenderer != null, nameof(_lSystemRenderer) + " != null");
             var rules = Rules.Text.Split('\n');
             var rulesDict = new Dictionary<char, string>();
             foreach (var rule in rules)
@@ -124,22 +131,26 @@ namespace L_System_Renderer
 
         private void ApplyLength()
         {
+            Debug.Assert(_lSystemRenderer != null, nameof(_lSystemRenderer) + " != null");
             _lSystemRenderer.CurrentPreset.Length = Convert.ToDouble(Length.Text);
             
         }
 
         private void ApplyAngleGrowth()
         {
+            Debug.Assert(_lSystemRenderer != null, nameof(_lSystemRenderer) + " != null");
             _lSystemRenderer.CurrentPreset.AngleGrowth = Convert.ToDouble(AngleGrowth.Text);
         }
 
         private void ApplyLengthGrowth()
         {
+            Debug.Assert(_lSystemRenderer != null, nameof(_lSystemRenderer) + " != null");
             _lSystemRenderer.CurrentPreset.LengthGrowth = Convert.ToDouble(LengthGrowth.Text);
         }
 
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
+            Debug.Assert(_lSystemRenderer != null, nameof(_lSystemRenderer) + " != null");
             ApplyAxiom();
             ApplyIterations();
             ApplyAngle();

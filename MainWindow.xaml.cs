@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -8,9 +9,9 @@ namespace L_System_Renderer
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
-        private static LSystemRenderer lSystemRenderer;
+        private static LSystemRenderer? _lSystemRenderer;
 
         public MainWindow()
         {
@@ -74,21 +75,21 @@ namespace L_System_Renderer
             });
 
             // Create the L-System Renderer Window
-            lSystemRenderer = new LSystemRenderer();
+            _lSystemRenderer = new LSystemRenderer();
             // Assign event for adding menu items once the L-System has loaded all presets from files
-            lSystemRenderer.LSystem.onPresetsLoaded += PresetsLoaded;
+            _lSystemRenderer.LSystem.OnPresetsLoaded += PresetsLoaded;
             
             // Make the main window display the L-System renderer
-            RendererFrame.Navigate(lSystemRenderer);
+            RendererFrame.Navigate(_lSystemRenderer);
             // Load the preset files
-            lSystemRenderer.Start();
+            _lSystemRenderer.Start();
 
         }
 
         private void PresetsLoaded()
         {
             var index = 0;
-            foreach (var preset in lSystemRenderer.LSystem.Presets)
+            foreach (var preset in _lSystemRenderer!.LSystem.Presets)
             {
                 index++;
                 // Only Assign shortcuts to the first 8 presets
@@ -146,31 +147,36 @@ namespace L_System_Renderer
         // MenuItem and KeyBind commands
         public ICommand LoadPreset { get; } = new SimpleDelegateCommand((x) =>
         {
+            Debug.Assert(_lSystemRenderer != null, nameof(_lSystemRenderer) + " != null");
             string name = (string)x;
-            lSystemRenderer.LoadPreset(name);
+            _lSystemRenderer.LoadPreset(name);
         });
 
         public ICommand Redraw { get; } = new SimpleDelegateCommand(_ =>
         {
-            lSystemRenderer.Redraw();
+            Debug.Assert(_lSystemRenderer != null, nameof(_lSystemRenderer) + " != null");
+            _lSystemRenderer.Redraw();
         });
 
         public ICommand NextIteration { get; } = new SimpleDelegateCommand(_ =>
         {
-            lSystemRenderer.IncreaseIteration();
+            Debug.Assert(_lSystemRenderer != null, nameof(_lSystemRenderer) + " != null");
+            _lSystemRenderer.IncreaseIteration();
         });
 
         public ICommand PreviousIteration { get; } = new SimpleDelegateCommand(_ =>
         {
-            lSystemRenderer.DecreaseIteration();
+            Debug.Assert(_lSystemRenderer != null, nameof(_lSystemRenderer) + " != null");
+            _lSystemRenderer.DecreaseIteration();
         });
 
         public ICommand OpenParameters { get; } = new SimpleDelegateCommand(_ =>
         {
+            Debug.Assert(_lSystemRenderer != null, nameof(_lSystemRenderer) + " != null");
             // Only open parameter window when a preset is in use
-            if (lSystemRenderer.PresetLoaded())
+            if (_lSystemRenderer.PresetLoaded())
             {
-                var parameterWindow = new ParameterWindow(lSystemRenderer);
+                var parameterWindow = new ParameterWindow(_lSystemRenderer);
                 parameterWindow.SetupWindow();
             }
             // Display error message if a preset hasn't been selected
@@ -182,9 +188,10 @@ namespace L_System_Renderer
 
         public ICommand OpenBrushSettings { get; } = new SimpleDelegateCommand(_ =>
         {
-            if (lSystemRenderer.PresetLoaded())
+            Debug.Assert(_lSystemRenderer != null, nameof(_lSystemRenderer) + " != null");
+            if (_lSystemRenderer.PresetLoaded())
             {
-                var brushSettings = new BrushSettings(lSystemRenderer);
+                var brushSettings = new BrushSettings(_lSystemRenderer);
                 brushSettings.Show();
             }
             else
@@ -208,8 +215,7 @@ namespace L_System_Renderer
 
         public void Execute(object? parameter)
         {
-            _executeDelegate(parameter);
-
+            _executeDelegate(parameter!);
         }
 
         // Always execute commands
