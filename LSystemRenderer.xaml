@@ -7,8 +7,8 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="LSystemRenderer">
-
     <Grid>
-        
+        <Rectangle Fill="White"/>
+        <Label Content="No Preset Selected" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="50" FontWeight="Bold" x:Name="Label"/>
     </Grid>
 </Page>

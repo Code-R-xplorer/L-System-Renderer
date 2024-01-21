@@ -7,3 +7,4 @@ Constants: +,-,[,]
 Length: 1
 Angle Growth: 0
 Length Growth: 0
+Max Iterations: 6
