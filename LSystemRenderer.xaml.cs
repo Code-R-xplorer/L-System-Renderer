@@ -72,10 +72,11 @@ namespace L_System_Renderer
                 MessageBox.Show("Select a Preset first!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-
-            if (_currentIterations == 10)
+            // Max iterations are determined by the preset file.
+            // If the user wishes to increase this number they must edit the preset file and reload.
+            if (_currentIterations >= CurrentPreset.MaxIterations)
             {
-                MessageBox.Show("Cannot go above 10 iterations, please use the parameters menu", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Cannot go above the presets max iterations. Increase the max iterations within the preset file (DO THIS AT YOUR OWN RISK!)", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             _currentIterations++;

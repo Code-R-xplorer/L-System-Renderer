@@ -63,6 +63,7 @@ namespace L_System_Renderer
             Length.Text = preset.Length.ToString(CultureInfo.InvariantCulture);
             AngleGrowth.Text = preset.AngleGrowth.ToString(CultureInfo.InvariantCulture);
             LengthGrowth.Text = preset.LengthGrowth.ToString(CultureInfo.InvariantCulture);
+            MaxIterations.Content = preset.MaxIterations.ToString(CultureInfo.InvariantCulture);
             Show(); // Display the window was all text has been set
         }
 
@@ -76,22 +77,12 @@ namespace L_System_Renderer
         {
             Debug.Assert(_lSystemRenderer != null, nameof(_lSystemRenderer) + " != null");
             var iterations = Convert.ToInt32(Iterations.Text);
-            // Large iterations can slow the program, so we check with the user
-            // if they are happy to continue
-            if (iterations > 10)
+            // Max iterations are determined by the preset file.
+            // If the user wishes to increase this number they must edit the preset file and reload.
+            if (iterations > _lSystemRenderer.CurrentPreset.MaxIterations)
             {
-                MessageBoxResult messageBoxResult =
-                    MessageBox.Show("Are you sure you want to go above 10 iterations?", "Warning", MessageBoxButton.YesNo,
-                        MessageBoxImage.Warning);
-                if (messageBoxResult == MessageBoxResult.Yes)
-                {
-                    _lSystemRenderer.CurrentPreset.Iterations = iterations;
-                }
-                // If they select No then set the iterations back to what it was before
-                else
-                {
-                    Iterations.Text = _lSystemRenderer.CurrentPreset.Iterations.ToString();
-                }
+                MessageBox.Show("Cannot go above the presets max iterations. Increase the max iterations within the preset file (DO THIS AT YOUR OWN RISK!)", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                Iterations.Text = _lSystemRenderer.CurrentPreset.Iterations.ToString();
             }
             else
             {

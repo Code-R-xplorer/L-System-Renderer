@@ -13,8 +13,9 @@ namespace L_System_Renderer
         public double Length;
         public double AngleGrowth;
         public double LengthGrowth;
+        public int MaxIterations;
 
-        public Preset(string title, string axiom, Dictionary<char, string> rules, int iterations, double angle, List<char> constants, double length, double angleGrowth, double lengthGrowth)
+        public Preset(string title, string axiom, Dictionary<char, string> rules, int iterations, double angle, List<char> constants, double length, double angleGrowth, double lengthGrowth, int maxIterations)
         {
             Title = title;
             Axiom = axiom;
@@ -25,6 +26,7 @@ namespace L_System_Renderer
             Length = length;
             AngleGrowth = angleGrowth;
             LengthGrowth = lengthGrowth;
+            MaxIterations = maxIterations;
         }
 
         public Preset Clone() { return (Preset)MemberwiseClone(); }

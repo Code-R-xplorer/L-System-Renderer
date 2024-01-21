@@ -7,5 +7,4 @@ Constants: +,-,[,],>,),|,F
 Length: 9
 Angle Growth: -0.055313
 Length Growth: 0.0001
-
-
+Max Iterations: 60

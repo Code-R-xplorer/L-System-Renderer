@@ -22,6 +22,10 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="0.5*" />
+            <RowDefinition />
+            <RowDefinition Height="0.5*" />
         </Grid.RowDefinitions>
 
         <Label Grid.Column="0"  Grid.Row="0" >
@@ -51,6 +55,9 @@
         <Label Grid.Column="0"  Grid.Row="8" >
             Length Growth
         </Label>
+        <Label Grid.Column="0"  Grid.Row="9" >
+            Max Iterations
+        </Label>
 
         <Label Grid.Column="1" Grid.Row="0" x:Name="Title">
             Preset Title
@@ -79,6 +86,9 @@
         <TextBox Grid.Column="1" Grid.Row="8" x:Name="LengthGrowth">
             Preset Length Growth
         </TextBox>
-        <Button Grid.Column="1" Grid.Row="9" Click="ButtonBase_OnClick">Apply Parameters</Button>
+        <Label Grid.Column="1" Grid.Row="9" x:Name="MaxIterations">
+            Preset Title
+        </Label>
+        <Button Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="12" Click="ButtonBase_OnClick">Apply Parameters</Button>
     </Grid>
 </Window>

@@ -63,7 +63,7 @@ namespace L_System_Renderer
 
                     string title = "", axiom = "";
                     Dictionary<char, string> rulesDict = new();
-                    int iterations = 0;
+                    int iterations = 0, maxIterations = 0;
                     double angle = 0.0, length = 0.0, angleGrowth = 0.0, lengthGrowth = 0.0;
                     List<char> constantsList = new();
 
@@ -128,10 +128,15 @@ namespace L_System_Renderer
                         {
                             angleGrowth = Convert.ToDouble(contents[1]);
                         }
+
+                        if (contents[0] == "Max Iterations")
+                        {
+                            maxIterations = Convert.ToInt32(contents[1]);
+                        }
                     }
 
                     var preset = new Preset(title, axiom, rulesDict, iterations, angle, constantsList, length,
-                        angleGrowth, lengthGrowth);
+                        angleGrowth, lengthGrowth, maxIterations);
 
                     Presets.Add(title, preset);
                 }
