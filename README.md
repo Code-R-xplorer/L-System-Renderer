@@ -14,7 +14,7 @@ If you would like to view the version I submitted as apart of my coursework for 
 
 If you would just like to run the application follow these steps.
 
-- Download the ZIP archive from the relase section
+- Download the ZIP archive from the relase section or click [here](https://github.com/Code-R-xplorer/L-System-Renderer/releases/tag/latest)
 - Extract the files to where ever you want to store them
 - Make sure the Presets folder is in the same folder as the .exe file
 - Run the .exe and have fun!
